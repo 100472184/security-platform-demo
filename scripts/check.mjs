@@ -1,0 +1,17 @@
+import { readdir } from 'node:fs/promises';
+import { join } from 'node:path';
+import { spawnSync } from 'node:child_process';
+let checked=0;
+async function check(directory) {
+  for(const entry of await readdir(directory,{withFileTypes:true})) {
+    const path=join(directory,entry.name);
+    if(entry.isDirectory())await check(path);
+    else if(/\.(js|mjs)$/.test(path)) {
+      const result=spawnSync(process.execPath,['--check',path],{stdio:'inherit'});
+      if(result.status!==0)process.exit(result.status||1);
+      checked++;
+    }
+  }
+}
+await check('src');await check('scripts');
+console.log(`✓ Sintaxis de ${checked} módulos JavaScript verificada.`);

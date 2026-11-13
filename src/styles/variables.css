@@ -1,0 +1,7 @@
+:root{
+ --bg:#080e1a;--sidebar:#0a1220;--top:#0a111e;--surface:#101b2b;--surface-2:#142235;--surface-3:#18283d;--surface-raised:#172538;
+ --border:#233249;--border-light:#2e405a;--txt:#e9f1fb;--muted:#91a2b9;--faint:#64768f;
+ --primary:#55a9ef;--primary-hover:#79c6ff;--teal:#7dd7c2;--orange:#f7b76b;--red:#f5828a;--purple:#a8a1ff;
+ --shadow:0 12px 44px #03091257;--radius:14px;--sidebar-w:246px;--topbar-h:68px;
+ color-scheme:dark;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+}

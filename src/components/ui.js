@@ -1,0 +1,32 @@
+import {icon} from '../lib/icons.js';
+import {readableState,stamp} from '../lib/store.js';
+import {NAV_ITEMS} from '../data/demo.js';
+export const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+export const fnum=n=>new Intl.NumberFormat('es-ES').format(n);
+export function pill(v){return `<span class="pill ${esc(String(v).toLowerCase().replaceAll('_','-'))}"><span class="pill-dot"></span>${esc(readableState(v))}</span>`;}
+export function button(text,action,value='',kind='secondary',ic=''){return `<button type="button" class="btn btn-${kind}" data-action="${esc(action)}" data-value="${esc(value)}">${ic?icon(ic,16):''}${text}</button>`;}
+export function sectionHeading(title,description='',tools=''){return `<div class="section-heading"><div><h2>${title}</h2>${description?`<p>${description}</p>`:''}</div>${tools?`<div class="heading-actions">${tools}</div>`:''}</div>`;}
+export function panel(title,inner,opts={}){return `<section class="panel ${opts.cls||''}"><div class="panel-header"><div><h3>${title}</h3>${opts.sub?`<p>${opts.sub}</p>`:''}</div>${opts.right||''}</div><div class="panel-body">${inner}</div></section>`;}
+export function empty(iconName,title,body,action=''){return `<div class="empty-state"><div class="empty-icon">${icon(iconName,28)}</div><h3>${esc(title)}</h3><p>${esc(body)}</p>${action}</div>`;}
+export function input(field,placeholder,value='',iconName='search',extra=''){return `<label class="field-search">${icon(iconName,17)}<input type="text" data-field="${esc(field)}" placeholder="${esc(placeholder)}" value="${esc(value)}" ${extra} autocomplete="off" /></label>`;}
+export function select(field,values,selected){return `<select data-field="${esc(field)}" class="select">${values.map(([value,label])=>`<option value="${esc(value)}" ${String(value)===String(selected)?'selected':''}>${esc(label)}</option>`).join('')}</select>`;}
+export function table(headers,body,emptyLabel='No hay resultados para los filtros seleccionados.'){
+ return `<div class="table-overflow"><table class="data-table"><thead><tr>${headers.map(h=>`<th ${h.sort?`data-action="sort" data-value="${h.sort}" class="sortable"`:''}>${h.label}${h.sort?icon('sort-desc',13):''}</th>`).join('')}</tr></thead><tbody>${body||`<tr><td colspan="${headers.length}" class="table-empty">${esc(emptyLabel)}</td></tr>`}</tbody></table></div>`;
+}
+export function pagination(total,page,per,scope='generic'){
+ const pages=Math.max(1,Math.ceil(total/per)); const actual=Math.min(page,pages);
+ return `<div class="pagination"><span>${total?`${(actual-1)*per+1}–${Math.min(total,actual*per)} de ${total}`:'0 resultados'}</span><div class="pagination-controls"><button class="icon-button" ${actual<=1?'disabled':''} data-action="page" data-value="${scope}:prev" aria-label="Página anterior">${icon('chevron-left',17)}</button><span>${actual} / ${pages}</span><button class="icon-button" ${actual>=pages?'disabled':''} data-action="page" data-value="${scope}:next" aria-label="Página siguiente">${icon('chevron-right',17)}</button></div></div>`;
+}
+export function topShell(ui,data){const nav=ui.route;const selected= NAV_ITEMS.find(x=>x.id===nav);const alertCount=data.alerts.filter(x=>x.status==='new'&&['critical','high'].includes(x.severity)).length;
+const sidebar=(section)=>NAV_ITEMS.filter(x=>x.section===section).map(x=>`<a href="/${x.id}" data-nav="${x.id}" class="nav-item ${nav===x.id?'active':''}" title="${esc(x.title)}"><span class="nav-icon">${icon(x.icon,18)}</span><span class="nav-name">${esc(x.title)}</span>${x.id==='alerts'?`<span class="nav-count">${alertCount}</span>`:''}${x.id==='analyst'?'<span class="nav-spark">✦</span>':''}</a>`).join('');
+return `<div class="app-frame ${ui.navCollapsed?'collapsed':''} ${ui.mobileNav?'mobile-menu-open':''}">
+ <header class="topbar"><div class="brand-group"><button class="icon-button menu-trigger" data-action="toggle-nav" aria-label="Contraer menú">${icon('menu',21)}</button><div class="brand-symbol">${icon('shield-check',22)}</div><div class="brand-title">SECURITY<span>PLATFORM</span></div><span class="brand-tag">SOC WORKSPACE</span></div><div class="topbar-right"><div class="header-mode"><span class="live-dot"></span>MODO DEMO</div><span class="topbar-separator"></span><button class="icon-button top-help" data-action="modal" data-value="help" title="Ayuda">${icon('circle-help',18)}</button><button class="profile-button" data-action="modal" data-value="profile"><span class="avatar">SD</span><span class="profile-label">Demo Analyst${icon('chevron-down',14)}</span></button></div></header>
+ <aside class="sidebar"><div class="nav-scroll"><div class="nav-section"><span class="nav-section-title">WORKSPACE</span>${sidebar('primary')}</div><div class="nav-section nav-tools"><span class="nav-section-title">HERRAMIENTAS</span>${sidebar('tools')}</div></div><div class="sidebar-footer"><div class="sidebar-health"><span class="live-dot"></span><span>3 / 3 nodos activos</span>${icon('arrow-up-right',15)}</div><span class="sidebar-version">Plataforma de demostración · v1.1</span></div></aside>
+ <div class="mobile-shade" data-action="toggle-nav"></div>
+ <main class="main-area"><div class="workspace-bg" aria-hidden="true"><div class="bg-orbit orbit-1"></div><div class="bg-orbit orbit-2"></div><div class="bg-orbit orbit-3"></div><div class="bg-center">◈</div></div>
+ <div class="page-container"><div class="page-topline"><div class="breadcrumb"><span>Security operations</span>${icon('chevron-right',14)}<strong>${esc(selected?.title||'Workspace')}</strong></div><div class="demo-clock">${icon('clock',14)} 13 NOV 2026 · DATOS SINTÉTICOS</div></div><div id="page-content">`;
+}
+export function bottomShell(ui){return `</div><footer class="page-footer"><span>© 2026 Security Platform · Entorno de demostración</span><span>Sin conexión a sistemas productivos ${icon('shield-check',14)}</span></footer></div></main><div id="overlay-root"></div><div id="toast-root">${ui.toast?`<div class="toast"><span class="toast-check">${icon('check-circle',18)}</span><span>${esc(ui.toast)}</span><button data-action="dismiss-toast" aria-label="Cerrar">${icon('x',15)}</button></div>`:''}</div></div>`;}
+export function infoRow(k,v){return `<div class="info-row"><span>${esc(k)}</span><strong>${v}</strong></div>`;}
+export function kv(label,value){return `<div class="kv"><small>${esc(label)}</small><div>${value}</div></div>`;}
+export function dateCell(s){return `<span class="mono subtle">${stamp(s)}</span>`;}

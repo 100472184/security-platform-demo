@@ -1,0 +1,21 @@
+{
+  "name": "security-platform-demo",
+  "private": true,
+  "version": "1.1.0",
+  "description": "Maqueta SOC con Kibana interactivo, datos locales y sin dependencias de ejecución.",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "node scripts/build.mjs",
+    "preview": "node scripts/dev.mjs --dist",
+    "check": "node scripts/check.mjs",
+    "test": "node scripts/smoke.mjs && node scripts/kibana-test.mjs",
+    "test:browser": "node scripts/browser-qa.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.56.1"
+  }
+}

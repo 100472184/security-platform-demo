@@ -1,0 +1,11 @@
+import {INITIAL_ALERTS, INITIAL_CASES, RULES, IOCS} from '../data/demo.js';
+const KEY='security-platform-demo-v1';
+const initial=()=>({alerts:structuredClone(INITIAL_ALERTS),cases:structuredClone(INITIAL_CASES),rules:structuredClone(RULES),watchlist:['203.0.113.68'],investigations:['ALT-260132','ALT-260145'],settings:{sound:false,compact:false,autorefresh:true},activity:[],chat:[{role:'assistant',text:'Bienvenido al espacio de análisis. Puedo ayudarte a interpretar alertas, correlacionar eventos y preparar una investigación utilizando exclusivamente los datos de esta demostración.'}]});
+export function loadStore(){try{const parsed=JSON.parse(localStorage.getItem(KEY));if(parsed&&Array.isArray(parsed.alerts)&&Array.isArray(parsed.cases)&&Array.isArray(parsed.rules))return {...initial(),...parsed};}catch{}return initial();}
+export function saveStore(data){try{localStorage.setItem(KEY,JSON.stringify(data));}catch{}}
+export function resetStore(){const data=initial();saveStore(data);return data;}
+export function createCase(data,alertIds=[],title='',severity='medium',description=''){const id=`CAS-${String(260042+data.cases.filter(c=>Number(c.id.split('-')[1])>=260042).length)}`;const item={id,title:title||'Investigación de alerta',severity,status:'new',owner:'Sin asignar',alertIds,created:'2026-11-13T10:15:00',description:description||'Caso abierto en modo demostración.',notes:[{at:'13 nov · 10:15',by:'Sistema de demostración',text:'Caso creado desde el espacio de trabajo SOC.'}]};data.cases.unshift(item);return item;}
+export function indicatorsFor(alert){return IOCS.filter(i=>i.related.includes(alert?.id)||i.value===alert?.src||i.value===alert?.dst);}
+export function readableState(v){return ({new:'Nuevo',acknowledged:'Reconocida',investigating:'En investigación',closed:'Cerrada',in_progress:'En curso',healthy:'Operativo',critical:'Crítica',high:'Alta',medium:'Media',low:'Baja',true:'Activa',false:'Desactivada'})[String(v)]||v;}
+export function stamp(date){if(!date)return '—';try{return new Date(date).toLocaleString('es-ES',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});}catch{return date;}}
+export function record(data,text){data.activity.unshift({text,at:'Ahora'});data.activity=data.activity.slice(0,24);saveStore(data);}
