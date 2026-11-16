@@ -160,7 +160,8 @@ security-platform-demo/
 │   ├── lib/icons.js               # Iconografía SVG local
 │   └── styles/
 │       ├── variables.css          # Tokens de diseño
-│       └── global.css             # Sistema visual y adaptabilidad
+│       ├── global.css             # Sistema visual y adaptabilidad
+│       └── refine.css             # Capa de refinamiento: densidad, contraste y tablas de consola
 └── scripts/
     ├── dev.mjs                    # Servidor HTTP local y rutas SPA con Node.js
     ├── dev.py                     # Servidor local equivalente con Python 3
